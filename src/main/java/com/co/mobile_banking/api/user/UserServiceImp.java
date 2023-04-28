@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
 
 @Service
@@ -29,7 +28,6 @@ public class UserServiceImp implements UserService{
 
     @Override
     public UserDto findUserById(Integer id) {
-        System.out.println("hello");
         User user= userMapper.selectById(id).orElseThrow(
                 ()-> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
@@ -58,6 +56,7 @@ public class UserServiceImp implements UserService{
         Boolean isIdExits=userMapper.exitsById(id);
         if(isIdExits){
             userMapper.updateIsDelete(id,status);
+            System.out.println("Update : "+userMapper.updateIsDeletedTest(id,status));
             return id;
         }
         throw new ResponseStatusException(

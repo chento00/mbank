@@ -33,4 +33,6 @@ public interface UserMapper {
 
     @UpdateProvider(type = UserProvider.class,method = "buildUpdateIsDeletedById")
     void updateIsDelete(@Param("id")Integer id,@Param("status") Boolean status);
+    @UpdateProvider(type = UserProvider.class,method = "buildUpdateIsDeletedById")
+    Integer updateIsDeletedTest(@Param("id")Integer id,@Param("status") Boolean status);
 }

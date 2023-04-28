@@ -1,9 +1,10 @@
 package com.co.mobile_banking.api.account;
 
+import com.co.mobile_banking.api.accounttype.AccountType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+import java.util.List;
 @NoArgsConstructor
 @Setter
 @Getter
@@ -16,5 +17,5 @@ public class Account {
     private String password;
     private String phone_number;
     private Integer transfer_limit;
-    private Integer account_type;
+    private List<AccountType> account_type;
 }
