@@ -1,9 +1,13 @@
 package com.co.mobile_banking.api.accounttype;
-import java.util.List;
+
+import com.co.mobile_banking.api.accounttype.web.AccountTypeDto;
+import com.co.mobile_banking.api.user.web.UserDto;
+import com.github.pagehelper.PageInfo;
+
 public interface AccountTypeService {
-    List<AccountTypeDto> findAll();
-    void add(AccountTypeDto accountTypeDto);
+    PageInfo<AccountTypeDto> findAll(int page,int limit,String name);
     AccountTypeDto findById(Integer id);
-    void update(AccountTypeDto accountTypeDto);
-    List<AccountTypeDto> findAllByName(String name);
+    AccountTypeDto add(AccountTypeDto accountTypeDto);
+    AccountTypeDto update(Integer id,AccountTypeDto accountTypeDto);
+    Integer deleteById(Integer id);
 }

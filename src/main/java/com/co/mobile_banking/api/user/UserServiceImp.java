@@ -1,7 +1,11 @@
 package com.co.mobile_banking.api.user;
 
 import com.co.mobile_banking.api.user.web.CreateUserDto;
+import com.co.mobile_banking.api.user.web.UpdateUserDto;
 import com.co.mobile_banking.api.user.web.UserDto;
+import com.github.pagehelper.ISelect;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,11 +26,6 @@ public class UserServiceImp implements UserService{
     }
 
     @Override
-    public List<UserDto> findAll() {
-        return userMapStruct.userToUserListDto(userMapper.findAll());
-    }
-
-    @Override
     public UserDto findUserById(Integer id) {
         User user= userMapper.selectById(id).orElseThrow(
                 ()-> new ResponseStatusException(
@@ -40,7 +39,6 @@ public class UserServiceImp implements UserService{
     @Override
     public Integer deleteByUserId(Integer id) {
         Boolean isIdExist=userMapper.exitsById(id);
-        System.out.println(isIdExist);
         if(isIdExist){
             userMapper.delete(id);
             return id;
@@ -64,4 +62,45 @@ public class UserServiceImp implements UserService{
                 String.format("User with %d is not found",id)
         );
     }
+
+    @Override
+    public PageInfo<UserDto> findAllUser(int page, int limit,String name) {
+        System.out.println("name imp: "+name);
+        PageInfo<User> userPageInfo= PageHelper.startPage(page,limit)
+                .doSelectPageInfo(
+                        () -> userMapper.select(name)
+                );
+        return userMapStruct.userPageInfoToUserPageDto(userPageInfo);
+    }
+
+    @Override
+    public Integer updateUserById(Integer id, UpdateUserDto updateUserDtp) {
+        return null;
+    }
+
+    @Override
+    public UserDto updateUser(Integer id, UpdateUserDto updateUserDto) {
+        User user=userMapper.selectById(id).orElseThrow(
+                ()->new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        String.format("User with %d is not found",id)
+                )
+        );
+         user=userMapStruct.updateUserDtoToUser(updateUserDto);
+         user.setId(id);
+         userMapper.updateById(user);
+         return this.findUserById(id);
+    }
+
+    @Override
+    public UserDto findByStudentCardId(String studentCardId) {
+        User user=userMapper.findByStudentCardId(studentCardId).orElseThrow(
+                () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        String.format("Student Card Id with id %s is not found",studentCardId)
+                )
+        );
+        return userMapStruct.userToUserDTO(user);
+    }
+
 }

@@ -2,6 +2,7 @@ package com.co.mobile_banking.api.user.web;
 
 import com.co.mobile_banking.api.user.UserService;
 import com.co.mobile_banking.base.BaseRest;
+import com.github.pagehelper.PageInfo;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,18 +31,6 @@ public class UserRestController {
                 .build();
     }
 
-    @GetMapping
-    BaseRest<?> findAll() {
-        List<UserDto> userDtoList=userService.findAll();
-        return BaseRest.builder()
-                .status(true)
-                .message("List all Student")
-                .code(HttpStatus.OK.value())
-                .timestamp(LocalDateTime.now())
-                .data(userService.findAll())
-                .build();
-    }
-
     @GetMapping("/{id}")
     BaseRest<?> findById(@PathVariable("id") Integer id) {
         UserDto userDto = userService.findUserById(id);
@@ -65,8 +54,8 @@ public class UserRestController {
                 .data(deletedId)
                 .build();
     }
-    @PutMapping("/{id}")
-    BaseRest<?> updateIsDeletedById(@PathVariable("id")Integer id,@RequestBody IsDeletedDto isDeleted){
+    @PutMapping("/{id}/update-is-deleted")
+    BaseRest<?> updateIsDeletedById(@PathVariable("id")Integer id,@RequestBody @Valid IsDeletedDto isDeleted){
         Integer deletedId=userService.updateIsDeleteById(id,isDeleted.status());
         return BaseRest.builder()
                 .status(true)
@@ -76,4 +65,44 @@ public class UserRestController {
                 .data(deletedId)
                 .build();
     }
+
+    @GetMapping("")
+    public BaseRest<?> findAllUser(@RequestParam(required = false,name = "page",defaultValue = "1") int page,
+                                   @RequestParam(required = false,name = "limit",defaultValue = "20") int limit,
+                                   @RequestParam(required = false,name = "name",defaultValue = "") String name
+                                   ){
+        PageInfo<UserDto> userDtoPageInfo=userService.findAllUser(page,limit,name);
+        return BaseRest.builder()
+                .status(true)
+                .code(HttpStatus.OK.value())
+                .timestamp(LocalDateTime.now())
+                .message("Users has been found")
+                .data(userDtoPageInfo)
+                .build();
+    }
+    @PutMapping("/{id}")
+    public BaseRest<?> updateUser(@PathVariable("id") Integer id,
+                                  @RequestBody UpdateUserDto updateUserDto){
+        UserDto userDto=userService.updateUser(id,updateUserDto);
+        return BaseRest.builder()
+                .status(true)
+                .code(HttpStatus.OK.value())
+                .timestamp(LocalDateTime.now())
+                .message("User update has been update success")
+                .data(userDto)
+                .build();
+    }
+    @GetMapping("/{studentId}/student-card-id")
+    public BaseRest<?> findByStudentCardId(@PathVariable("studentId") String studentId){
+        System.out.println(studentId);
+        UserDto userDto=userService.findByStudentCardId(studentId);
+        return BaseRest.builder()
+                .status(true)
+                .code(HttpStatus.OK.value())
+                .timestamp(LocalDateTime.now())
+                .message("User search has been update success")
+                .data(userDto)
+                .build();
+    }
+
 }

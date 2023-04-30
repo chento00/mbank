@@ -18,11 +18,16 @@ public class UserProvider {
             VALUES("is_deleted","FALSE");
         }}.toString();
     }
-    public String buildSelectSql(){
+    public String buildSelectSql(@Param("name") String name){
         return new SQL(){{
             SELECT("*");
             FROM(tblName);
-            WHERE("is_deleted=false");
+            if(!name.isEmpty()){
+                System.out.println("hello");
+                WHERE("name ILIKE CONCAT('%',#{name},'%')","is_deleted=false");
+            }else{
+                WHERE("is_deleted=false");
+            }
         }}.toString();
     }
     public String buildSelectByIdSql(){
@@ -43,6 +48,42 @@ public class UserProvider {
             UPDATE(tblName);
             SET("is_deleted=#{status}");
             WHERE("id=#{id}");
+        }}.toString();
+    }
+    public String buildSelectUserPagination(){
+        return new SQL(){{
+            SELECT("*");
+            FROM(tblName);
+            WHERE("is_deleted=FALSE");
+            ORDER_BY("id DESC");
+        }}.toString();
+    }
+    public String buildUpdateSql(){
+        return new SQL(){{
+            UPDATE(tblName);
+            SET("name=#{u.name}");
+            SET("gender=#{u.gender}");
+            WHERE("id=#{u.id}");
+        }}.toString();
+    }
+    public String buildDeleteByIdSql(){
+        return new SQL(){{
+            DELETE_FROM(tblName);
+            WHERE("id=#{id}");
+        }}.toString();
+    }
+    public String buildSelectAllUserByNameSql(){
+        return new SQL(){{
+            SELECT("*");
+            FROM(tblName);
+            WHERE("name ILIKE CONCAT('%',#{name},'%')","is_deleted=false");
+        }}.toString();
+    }
+    public String buildSelectByStudentCardIdSql(){
+        return new SQL(){{
+            SELECT("*");
+            FROM(tblName);
+            WHERE("student_card_id=#{studentCardId}","is_deleted=false");
         }}.toString();
     }
 }

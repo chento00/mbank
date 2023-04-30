@@ -1,28 +1,27 @@
 package com.co.mobile_banking.api.accounttype;
 
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 import java.util.List;
-@Mapper
+import java.util.Optional;
+
 @Repository
+@Mapper
 public interface AccountTypeMapper {
     @SelectProvider(type = AccountTypeProvider.class,method = "buildSelectSql")
-    List<AccountType> select();
+    List<AccountType> select(@Param("name") String name);
+    @SelectProvider(type = AccountTypeProvider.class,method = "buildSelectByIdSql")
+    Optional<AccountType> findById(@Param("id") Integer id);
     @InsertProvider(type = AccountTypeProvider.class,method = "buildInsertSql")
-    void add(AccountType accountType);
-    @SelectProvider(type = AccountTypeProvider.class,method = "buildSearchByIdSql")
-    AccountType findById(Integer id);
-    @UpdateProvider(type = AccountTypeProvider.class,method = "buildUpdateIdSql")
-    void update(AccountType accountType);
-    @SelectProvider(type = AccountTypeProvider.class,method = "buildSearchByNameSql")
-    List<AccountType> findALlByName(String name);
+    void insert(@Param("a") AccountType accountType);
+    @InsertProvider(type = AccountTypeProvider.class,method = "buildUpdateSql")
+    void update(@Param("a") AccountType accountType);
+    @Select(
+            """
+            SELECT EXISTS (SELECT *FROM account_types where id=#{id})      
+            """
+    )
+    boolean isIdExist(@Param("id") Integer id);
+    @DeleteProvider(type = AccountTypeProvider.class,method = "buildDeleteSql")
+    void delete(@Param("id") Integer id);
 }
-
-
-
-
-
-

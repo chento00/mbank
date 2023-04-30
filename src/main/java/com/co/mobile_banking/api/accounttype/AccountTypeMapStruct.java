@@ -1,14 +1,12 @@
 package com.co.mobile_banking.api.accounttype;
 
+import com.co.mobile_banking.api.accounttype.web.AccountTypeDto;
+import com.github.pagehelper.PageInfo;
 import org.mapstruct.Mapper;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 @Mapper(componentModel = "spring")
 public interface AccountTypeMapStruct {
-    List<AccountTypeDto> toDtoList(List<AccountType> model);
-    AccountTypeDto toDto(AccountType model);
-    AccountType toPojo(AccountTypeDto accountTypeDto);
-    List<AccountType> toPojoList(List<AccountTypeDto> accountTypeDtos);
+    PageInfo<AccountTypeDto> acccountTypePageToAccountTypeDtoPageInfo(PageInfo<AccountType> accountTypePageInfo);
+    AccountTypeDto accountTypeToAccountTypeDto(AccountType accountType);
+    AccountType createAccountType(AccountTypeDto accountTypeDto);
 }

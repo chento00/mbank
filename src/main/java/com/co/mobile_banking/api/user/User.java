@@ -4,6 +4,7 @@ import lombok.*;
 
 @Data
 @AllArgsConstructor
+@Builder
 @NoArgsConstructor
 @Setter
 public class User {

@@ -1,7 +1,9 @@
 package com.co.mobile_banking.api.user;
 
 import com.co.mobile_banking.api.user.web.CreateUserDto;
+import com.co.mobile_banking.api.user.web.UpdateUserDto;
 import com.co.mobile_banking.api.user.web.UserDto;
+import com.github.pagehelper.PageInfo;
 import lombok.Builder;
 import org.mapstruct.Mapper;
 import java.util.List;
@@ -11,4 +13,6 @@ public interface UserMapStruct {
     UserDto userToUserDTO(User user);
     List<UserDto> userToUserListDto(List<User> userList);
     User userDtoToUser(UserDto userDto);
+    PageInfo<UserDto> userPageInfoToUserPageDto(PageInfo<User> userPageInfo);
+    User updateUserDtoToUser(UpdateUserDto userDto);
 }

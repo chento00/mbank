@@ -6,8 +6,8 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @Builder
-@ToString
 @NoArgsConstructor
+@ToString
 public class AccountType {
     private Integer id;
     private String name;
