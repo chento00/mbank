@@ -22,7 +22,14 @@ public class AccountTypeServiceImp implements AccountTypeService{
         PageInfo<AccountType> accountTypePageInfo= PageHelper.startPage(page,limit).doSelectPageInfo(
                 () -> accountTypeMapper.select(name)
         );
-        return mapStruct.acccountTypePageToAccountTypeDtoPageInfo(accountTypePageInfo);
+        if(!name.isEmpty() && accountTypePageInfo.getList().size()<1){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    String.format("AccountType with name %s is not found",name)
+            );
+        }else{
+            return mapStruct.acccountTypePageToAccountTypeDtoPageInfo(accountTypePageInfo);
+        }
     }
 
     @Override

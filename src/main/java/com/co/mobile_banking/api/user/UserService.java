@@ -11,7 +11,6 @@ public interface UserService {
     Integer deleteByUserId(Integer id);
     Integer updateIsDeleteById(Integer id,Boolean status);
     PageInfo<UserDto> findAllUser(int page,int limit,String name);
-    Integer updateUserById(Integer id, UpdateUserDto updateUserDtp);
     UserDto updateUser(Integer id,UpdateUserDto updateUserDto);
     UserDto findByStudentCardId(String studentCardId);
 }

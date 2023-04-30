@@ -65,17 +65,18 @@ public class UserServiceImp implements UserService{
 
     @Override
     public PageInfo<UserDto> findAllUser(int page, int limit,String name) {
-        System.out.println("name imp: "+name);
         PageInfo<User> userPageInfo= PageHelper.startPage(page,limit)
                 .doSelectPageInfo(
                         () -> userMapper.select(name)
                 );
-        return userMapStruct.userPageInfoToUserPageDto(userPageInfo);
-    }
-
-    @Override
-    public Integer updateUserById(Integer id, UpdateUserDto updateUserDtp) {
-        return null;
+        if(!name.isEmpty() && userPageInfo.getList().size()<1){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    String.format("User with name %s is not found",name)
+            );
+        }else{
+            return userMapStruct.userPageInfoToUserPageDto(userPageInfo);
+        }
     }
 
     @Override
