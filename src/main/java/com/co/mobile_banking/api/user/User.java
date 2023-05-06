@@ -1,12 +1,16 @@
 package com.co.mobile_banking.api.user;
 
+import com.co.mobile_banking.api.account.Account;
+import com.co.mobile_banking.api.useraccounts.UserAccount;
 import lombok.*;
 
-@Data
+import java.util.List;
+
 @AllArgsConstructor
-@Builder
 @NoArgsConstructor
+@ToString
 @Setter
+@Getter
 public class User {
     private Integer id;
     private String name;
@@ -15,5 +19,5 @@ public class User {
     private String studentCardId;
     private Boolean isDeleted;
     private Boolean isStudent;
-
+    private List<Account> accountList;
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -48,6 +49,17 @@ public class ApiException {
                 .code(HttpStatus.BAD_REQUEST.value())
                 .timestamp(LocalDateTime.now())
                 .erros(body)
+                .build();
+    }
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public BaseError<?> handleValidationException(MaxUploadSizeExceededException e){
+        return BaseError.builder()
+                .status(false)
+                .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message("something when wrong ... please check")
+                .timestamp(LocalDateTime.now())
+                .erros("Maximum upload size exceeded: 1000KB")
                 .build();
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
@@ -54,9 +55,10 @@ public class UserRestController {
                 .data(deletedId)
                 .build();
     }
+
     @PutMapping("/{id}/update-is-deleted")
-    BaseRest<?> updateIsDeletedById(@PathVariable("id")Integer id,@RequestBody @Valid IsDeletedDto isDeleted){
-        Integer deletedId=userService.updateIsDeleteById(id,isDeleted.status());
+    BaseRest<?> updateIsDeletedById(@PathVariable("id") Integer id, @RequestBody @Valid IsDeletedDto isDeleted) {
+        Integer deletedId = userService.updateIsDeleteById(id, isDeleted.status());
         return BaseRest.builder()
                 .status(true)
                 .code(HttpStatus.OK.value())
@@ -67,11 +69,11 @@ public class UserRestController {
     }
 
     @GetMapping("")
-    public BaseRest<?> findAllUser(@RequestParam(required = false,name = "page",defaultValue = "1") int page,
-                                   @RequestParam(required = false,name = "limit",defaultValue = "20") int limit,
-                                   @RequestParam(required = false,name = "name",defaultValue = "") String name
-                                   ){
-        PageInfo<UserDto> userDtoPageInfo=userService.findAllUser(page,limit,name);
+    public BaseRest<?> findAllUser(@RequestParam(required = false, name = "page", defaultValue = "1") int page,
+                                   @RequestParam(required = false, name = "limit", defaultValue = "20") int limit,
+                                   @RequestParam(required = false, name = "name", defaultValue = "") String name
+    ) {
+        PageInfo<UserDto> userDtoPageInfo = userService.findAllUser(page, limit, name);
         return BaseRest.builder()
                 .status(true)
                 .code(HttpStatus.OK.value())
@@ -80,10 +82,11 @@ public class UserRestController {
                 .data(userDtoPageInfo)
                 .build();
     }
+
     @PutMapping("/{id}")
     public BaseRest<?> updateUser(@PathVariable("id") Integer id,
-                                  @RequestBody UpdateUserDto updateUserDto){
-        UserDto userDto=userService.updateUser(id,updateUserDto);
+                                  @RequestBody UpdateUserDto updateUserDto) {
+        UserDto userDto = userService.updateUser(id, updateUserDto);
         return BaseRest.builder()
                 .status(true)
                 .code(HttpStatus.OK.value())
@@ -92,10 +95,11 @@ public class UserRestController {
                 .data(userDto)
                 .build();
     }
+
     @GetMapping("/{studentId}/student-card-id")
-    public BaseRest<?> findByStudentCardId(@PathVariable("studentId") String studentId){
+    public BaseRest<?> findByStudentCardId(@PathVariable("studentId") String studentId) {
         System.out.println(studentId);
-        UserDto userDto=userService.findByStudentCardId(studentId);
+        UserDto userDto = userService.findByStudentCardId(studentId);
         return BaseRest.builder()
                 .status(true)
                 .code(HttpStatus.OK.value())
@@ -103,6 +107,21 @@ public class UserRestController {
                 .message("User search has been update success")
                 .data(userDto)
                 .build();
+    }
+
+    @GetMapping("/user-with-user-account")
+    public BaseRest<?> findAllUserWithUserAccount(@RequestParam(required = false, name = "page", defaultValue = "1") int page,
+                                                  @RequestParam(required = false, name = "limit", defaultValue = "20") int limit,
+                                                  @RequestParam(required = false, name = "name", defaultValue = "") String name) {
+        PageInfo<UserJoinUserAccountDto> userJoinUserAccountDtoPageInfo = userService.findAllUserWithUserAccount(page, limit, name);
+        return BaseRest.builder()
+                .status(true)
+                .code(HttpStatus.OK.value())
+                .timestamp(LocalDateTime.now())
+                .message("User search has been update success")
+                .data(userJoinUserAccountDtoPageInfo)
+                .build();
+
     }
 
 }

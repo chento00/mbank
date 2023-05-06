@@ -13,31 +13,31 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class AccountTypeServiceImp implements AccountTypeService{
+public class AccountTypeServiceImp implements AccountTypeService {
     private final AccountTypeMapStruct mapStruct;
     private final AccountTypeMapper accountTypeMapper;
 
     @Override
-    public PageInfo<AccountTypeDto> findAll(int page, int limit,String name) {
-        PageInfo<AccountType> accountTypePageInfo= PageHelper.startPage(page,limit).doSelectPageInfo(
+    public PageInfo<AccountTypeDto> findAll(int page, int limit, String name) {
+        PageInfo<AccountType> accountTypePageInfo = PageHelper.startPage(page, limit).doSelectPageInfo(
                 () -> accountTypeMapper.select(name)
         );
-        if(!name.isEmpty() && accountTypePageInfo.getList().size()<1){
+        if (!name.isEmpty() && accountTypePageInfo.getList().size() < 1) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    String.format("AccountType with name %s is not found",name)
+                    String.format("AccountType with name %s is not found", name)
             );
-        }else{
+        } else {
             return mapStruct.acccountTypePageToAccountTypeDtoPageInfo(accountTypePageInfo);
         }
     }
 
     @Override
     public AccountTypeDto findById(Integer id) {
-        AccountType accountType=accountTypeMapper.findById(id).orElseThrow(
+        AccountType accountType = accountTypeMapper.findAccountTypeById(id).orElseThrow(
                 () -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        String.format("AccountType with id %d is not found",id)
+                        String.format("AccountType with id %d is not found", id)
                 )
         );
         return mapStruct.accountTypeToAccountTypeDto(accountType);
@@ -45,20 +45,20 @@ public class AccountTypeServiceImp implements AccountTypeService{
 
     @Override
     public AccountTypeDto add(AccountTypeDto accountTypeDto) {
-        AccountType accountType=mapStruct.createAccountType(accountTypeDto);
+        AccountType accountType = mapStruct.createAccountType(accountTypeDto);
         accountTypeMapper.insert(accountType);
         return mapStruct.accountTypeToAccountTypeDto(accountType);
     }
 
     @Override
-    public AccountTypeDto update(Integer id,AccountTypeDto accountTypeDto) {
-        AccountType accountType=accountTypeMapper.findById(id).orElseThrow(
+    public AccountTypeDto update(Integer id, AccountTypeDto accountTypeDto) {
+        AccountType accountType = accountTypeMapper.findAccountTypeById(id).orElseThrow(
                 () -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        String.format("AccountType with id %d is not found",id)
+                        String.format("AccountType with id %d is not found", id)
                 )
         );
-        accountType=mapStruct.createAccountType(accountTypeDto);
+        accountType = mapStruct.createAccountType(accountTypeDto);
         accountType.setId(id);
         accountTypeMapper.update(accountType);
         System.out.println(accountType);
@@ -67,14 +67,14 @@ public class AccountTypeServiceImp implements AccountTypeService{
 
     @Override
     public Integer deleteById(Integer id) {
-        boolean isIdExist=accountTypeMapper.isIdExist(id);
-        if(isIdExist){
+        boolean isIdExist = accountTypeMapper.isIdExist(id);
+        if (isIdExist) {
             accountTypeMapper.delete(id);
             return id;
         }
         throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
-                String.format("AccountType with id %d is not found",id)
+                String.format("AccountType with id %d is not found", id)
         );
     }
 }

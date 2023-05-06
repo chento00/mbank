@@ -4,7 +4,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.jdbc.SQL;
 
 public class AccountTypeProvider {
-    private String tblName="account_types";
+    private final String tblName="account_types";
     public String buildSelectSql(@Param("name") String name) {
         return new SQL() {{
             SELECT("*");
