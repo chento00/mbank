@@ -45,7 +45,21 @@ public interface FileService {
      */
     String deleteByName(String filename);
 
+    /**
+     * use to remove all file from a folder sever
+     *
+     * @return if success return true
+     */
+
     boolean removeAllFiles();
+
+    /**
+     * use to download file from browser by putting the url in a browser and if test in postman respone json
+     *
+     * @param filename : filename to download
+     * @param response : is an interface in Java's Servlet API that defines the response that a servlet can send to an HTTP client
+     * @return FileDto to response data for download
+     */
 
     FileDto downloadFileByFileName(String filename, HttpServletResponse response);
 }
