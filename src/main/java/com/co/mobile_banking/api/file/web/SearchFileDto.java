@@ -1,4 +1,4 @@
-package com.co.mobile_banking.api.file;
+package com.co.mobile_banking.api.file.web;
 
 import java.io.File;
 

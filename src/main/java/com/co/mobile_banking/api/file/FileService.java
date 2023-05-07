@@ -1,5 +1,6 @@
 package com.co.mobile_banking.api.file;
 
+import com.co.mobile_banking.api.file.web.FileDto;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -1,5 +1,6 @@
-package com.co.mobile_banking.api.file;
+package com.co.mobile_banking.api.file.web;
 
+import com.co.mobile_banking.api.file.FileService;
 import com.co.mobile_banking.base.BaseRest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -95,7 +96,7 @@ public class FileRestController {
 
     @GetMapping("/download/{name}")
     public BaseRest<?> downloadFile(@PathVariable("name") String name, HttpServletResponse response) {
-        FileDto resultFiles = fileService.downloadFileByFileName(name, response);
+        var resultFiles = fileService.downloadFileByFileName(name, response);
         return BaseRest.builder()
                 .status(true)
                 .code(HttpStatus.OK.value())
@@ -104,6 +105,5 @@ public class FileRestController {
                 .data(resultFiles)
                 .build();
     }
-
 
 }

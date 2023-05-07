@@ -1,28 +1,27 @@
 package com.co.mobile_banking.api.file;
 
+import com.co.mobile_banking.api.file.web.FileDto;
 import com.co.mobile_banking.util.FileUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+
 import java.io.*;
-import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static java.lang.System.out;
 
 @Service
 public class FileServiceImp implements FileService {
@@ -31,8 +30,8 @@ public class FileServiceImp implements FileService {
     private String fileServerPath;
     @Value("${file.base-url}")
     private String baseUrl;
-    @Value("${file.domain}")
-    private String fileDomain;
+    @Value("${file.download-url}")
+    private String fileDownloadUrl;
     @Autowired
     private ResourceLoader resourceLoader;
 
@@ -62,12 +61,12 @@ public class FileServiceImp implements FileService {
             List<File> fileList = new ArrayList<>(List.of(Objects.requireNonNull(file.listFiles())));
             List<FileDto> resultList = new ArrayList<>();
             for (File f : fileList) {
-                String extension = fileUtil.getExtensionFile(file);
                 resultList.add(
                         FileDto.builder()
                                 .name(f.getName())
                                 .url(baseUrl + f.getName())
-                                .extension(extension)
+                                .downloadUrl(fileDownloadUrl + f.getName())
+                                .extension(fileUtil.getExtensionFile(f))
                                 .size(f.length())
                                 .build()
                 );
@@ -88,6 +87,7 @@ public class FileServiceImp implements FileService {
                 return FileDto.builder()
                         .name(resource.getFilename())
                         .url(baseUrl + resource.getFilename())
+                        .downloadUrl(fileDownloadUrl + resource.getFilename())
                         .extension(fileUtil.getExtensionFile(resource.getFile()))
                         .size(resource.contentLength())
                         .build();
@@ -137,7 +137,7 @@ public class FileServiceImp implements FileService {
         Resource resource = resourceLoader.getResource("file:" + fileServerPath);
         try {
             File folder = ResourceUtils.getFile(resource.getURL());
-            System.out.println(folder);
+            out.println(folder);
             FileUtils.cleanDirectory(folder);
             return true;
         } catch (IOException e) {
@@ -150,19 +150,32 @@ public class FileServiceImp implements FileService {
 
     @Override
     public FileDto downloadFileByFileName(String filename, HttpServletResponse response) {
-        // just file your file in your folder
         Path path = Paths.get(fileServerPath + filename);
-        // convert that file name string to file type File
         File file = path.toFile();
-        // when url route to that url it will download by **TODO attachment
-        response.setContentType("application/octet-stream");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
-        return FileDto.builder()
-                .name(file.getName())
-                .url(baseUrl + file.getName())
-                .downloadUrl(fileDomain + "api/v1/files/download/")
-                .extension(fileUtil.getExtensionFile(file))
-                .size(file.length())
-                .build();
+        if (file.exists()) {
+            byte[] imageData = fileUtil.getImageData(file.getName());
+            String extension = fileUtil.getExtensionFile(file);
+            response.setContentType(fileUtil.getContentType(extension));
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+            try {
+                response.getOutputStream().write(imageData);
+                return FileDto.builder()
+                        .name(file.getName())
+                        .url(baseUrl + file.getName())
+                        .downloadUrl(fileDownloadUrl + file.getName())
+                        .extension(fileUtil.getExtensionFile(file))
+                        .size(file.length())
+                        .build();
+            } catch (IOException e) {
+                throw new ResponseStatusException(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        "writing file error please !!"
+                );
+            }
+        }
+        throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                String.format("file name %s not found !!", filename)
+        );
     }
 }

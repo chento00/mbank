@@ -1,7 +1,7 @@
 package com.co.mobile_banking.util;
 
-import com.co.mobile_banking.api.file.FileDto;
-import com.co.mobile_banking.api.file.SearchFileDto;
+import com.co.mobile_banking.api.file.web.FileDto;
+import com.co.mobile_banking.api.file.web.SearchFileDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -24,7 +24,8 @@ public class FileUtil {
     private String fileServerPath;
     @Value("${file.base-url}")
     private String fileBaseUrl;
-
+    @Value("${file.download-url}")
+    private String fileDownloadUrl;
     public FileDto upload(MultipartFile file) {
         int lastDotIndex = Objects.requireNonNull(file.getOriginalFilename()).lastIndexOf(".");
         String extension = file.getOriginalFilename().substring(lastDotIndex + 1);
@@ -37,6 +38,7 @@ public class FileUtil {
             return FileDto.builder()
                     .name(fileName)
                     .url(url)
+                    .downloadUrl(fileDownloadUrl + path.getFileName())
                     .extension(extension)
                     .size(size)
                     .build();
@@ -72,9 +74,27 @@ public class FileUtil {
         int lastDotIndex = file.getName().lastIndexOf(".");
         return file.getName().substring(lastDotIndex + 1);
     }
-
+    public byte[] getImageData(String filename)  {
+        Path imagePath = Paths.get(fileServerPath + filename);
+        try {
+            return Files.readAllBytes(imagePath);
+        } catch (IOException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "reading file error might be an array of the required size cannot be allocated!!"
+            );
+        }
+    }
     public String getExtensionStringFile(String file) {
         int lastDotIndex = file.lastIndexOf(".");
         return file.substring(lastDotIndex + 1);
+    }
+    public String getContentType(String extension){
+        return switch (extension) {
+            case "pdf" -> "application/pdf";
+            case "png" -> "image/png";
+            case "webp" -> "image/webp";
+            default -> "application/octet-stream";
+        };
     }
 }

@@ -1,4 +1,4 @@
-package com.co.mobile_banking.api.file;
+package com.co.mobile_banking.api.file.web;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
